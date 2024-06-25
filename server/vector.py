@@ -1,7 +1,7 @@
 from pymilvus import MilvusClient
 from pymilvus import model
 from pymilvus import connections
-# connections.disconnect("vector.db")
+connections.disconnect("vector.db")
 
 try:
   print(connections)
