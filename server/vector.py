@@ -2,30 +2,6 @@ from pymilvus import MilvusClient
 from pymilvus import model
 from pymilvus import connections
 
-
-# connections.disconnect("vector.db")
-# connections.disconnect("vector.db")
-
-# try:
-#   print(connections)
-#   client = MilvusClient("vector.db")
-# except:
-#   connections.disconnect("vector.db")
-#   client = MilvusClient("vector.db")
-
-# # This should delete the collection upon each backend server restart. 
-# # We will want to change this to preserve our embeddings
-# # over time. 
-# if client.has_collection(collection_name="demo_collection"):
-#   client.drop_collection(collection_name="demo_collection")
-# client.create_collection(
-#     collection_name="demo_collection",
-#     # I assume tweeking the dimensionality of vectors is variable we'll need to 
-#     # tweek. I expect it's effects reach chunksize, embedding model, similarity search accuracy
-#     # and speed 
-#     dimension=768,
-# )
-
 async def reset_collection(database_name, collection_name):
   client = MilvusClient(database_name)
   if client.has_collection(collection_name=collection_name):
