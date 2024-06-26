@@ -1,41 +1,32 @@
 from pymilvus import MilvusClient
 from pymilvus import model
 from pymilvus import connections
-connections.disconnect("vector.db")
 
-try:
-  print(connections)
-  client = MilvusClient("vector.db")
-except:
+async def reset_collection(database_name, collection_name):
+  client = MilvusClient(database_name)
+  if client.has_collection(collection_name=collection_name):
+    client.drop_collection(collection_name=collection_name)
+  client.create_collection(
+      collection_name=collection_name,
+      # I assume tweeking the dimensionality of vectors is variable we'll need to 
+      # tweek. I expect it's effects reach chunksize, embedding model, similarity search accuracy
+      # and speed 
+      dimension=768,
+  )
   connections.disconnect("vector.db")
-  client = MilvusClient("vector.db")
-
-# This should delete the collection upon each backend server restart. 
-# We will want to change this to preserve our embeddings
-# over time. 
-if client.has_collection(collection_name="demo_collection"):
-  client.drop_collection(collection_name="demo_collection")
-client.create_collection(
-    collection_name="demo_collection",
-    # I assume tweeking the dimensionality of vectors is variable we'll need to 
-    # tweek. I expect it's effects reach chunksize, embedding model, similarity search accuracy
-    # and speed 
-    dimension=768,
-)
 
 # many embedding models to choose from with milvus
 # https://milvus.io/docs/embeddings.md
 embedding_fn = model.DefaultEmbeddingFunction()
-connections.disconnect("vector.db")
 
-def embed_and_insert(sentences):
-    data = embed_sentences(sentences)
-    insert_result = insert_data_into_collection(data)
+async def embed_and_insert(sentences):
+    data = await embed_sentences(sentences)
+    insert_result = await insert_data_into_collection(data)
     return insert_result
 
 # embeds sentences into vectors
 # creates a list of dictionaries for the vector_db
-def embed_sentences(sentences):
+async def embed_sentences(sentences):
     # here we create a list of embeddings by passing the
     # list of sentences into `embedding_fn.encode_documents`
     #
@@ -53,7 +44,7 @@ def embed_sentences(sentences):
 
 
 # inserts data into the collection
-def insert_data_into_collection(data):
+async def insert_data_into_collection(data):
     client = MilvusClient("vector.db")
     # collection_name should match the name of the collection you want
     # to insert into... duh

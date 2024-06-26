@@ -20,13 +20,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.post("/api/upload")
 async def process_file(file: UploadFile = File(...)):
+    print("resetting collection...")
+    await vdb.reset_collection("vector.db", "demo_collection")
     print("processing file...")
     sentences = await process.pdf(file)
     print("file processed. embedding and inserting into db...")
-    result = vdb.embed_and_insert(sentences)
+    result = await vdb.embed_and_insert(sentences)
     return {"message": f"{result['insert_count']} entries added to database"}
 
 class UserQuery(BaseModel):
