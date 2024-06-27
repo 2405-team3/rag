@@ -20,10 +20,11 @@ async def process_prompt(query, context):
 def create_messages(query, context):
     return [
         {"role": "system", "content": "You are tasked with utilizing provided context to answer a user's question with a scholarly response."},
-        {"role": "system", "content": "Please never use one-word introductory clauses."},
+        {"role": "system", "content": "There is a chance that the question you're given won't be answerable with the context you're given. Please never use one-word introductory clauses."},
         # {"role": "system", "content": f'Do not use any sources of information outside of this context: {context}'},
         {"role": "system", "content": f'The content you will be using to answer questions is {context}'},
-        {"role": "user", "content": f'Extrapolate on but only use the given information to answer this question: {query}'}
+        {"role": "user", "content": f"Please attempt to answer this next question as best you can using only the information I gave you in the last message. If you don't feel like you have enough information to answer the question, it's alright to say so. If you do, respond by letting the user know what kinds of questions might be answerable given the context."},
+        {"role": "user", "content": f"Here's the question I'd like you to try and answer: {query}"},
     ]
 
     # preamble = 'Extrapolate on but only use the given information to respond to this question:'
