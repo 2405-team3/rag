@@ -29,8 +29,10 @@ async def embed_and_insert(sentences):
 async def embed_sentences(sentences):
     # here we create a list of embeddings by passing the
     # list of sentences into `embedding_fn.encode_documents`
-    #
-    vectors = embedding_fn.encode_documents(sentences)
+    try:
+        vectors = embedding_fn.encode_documents(sentences)
+    except:
+        raise Exception("Chunk sizes are too big to encode!")
 
     # creates an array of dictionaries via list comprehension
     # each with id, vector, text, and subject
@@ -39,7 +41,7 @@ async def embed_sentences(sentences):
       for i in range(len(vectors))
     ]
 
-    print("Data has", len(data), "entities, each with fields: ", data[0].keys())
+    # print("Data has", len(data), "entities, each with fields: ", data[0].keys())
     return data
 
 
@@ -50,7 +52,7 @@ async def insert_data_into_collection(data):
     # to insert into... duh
     result = client.insert(collection_name="demo_collection", data=data)
 
-    print(result)
+    # print(result)
     connections.disconnect("vector.db")
     return result
 
@@ -60,7 +62,7 @@ def text_from_single_query_result(result):
 
 # for skateboard, it may be wise to limit the queries down to one sentence
 # though we can likely test how longer sentences do
-async def process_query(query, num_results=5):
+async def process_query(query, num_results=3):
     client = MilvusClient("vector.db")
     query_vector = embedding_fn.encode_queries(query)
 

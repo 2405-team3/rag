@@ -5,12 +5,11 @@ import io
 nlp = spacy.load("en_core_web_sm")
 
 
-async def pdf(file):
-    pdf = await open_pdf(file)
-    sentences = pdf_to_sentences(pdf)
-    return sentences
+async def chunk_pdf(file):
+    pdf = await open(file)
+    return sentences(pdf)
 
-async def open_pdf(file):
+async def open(file):
     file_bytes = await file.read()
     file_buffer = io.BytesIO(file_bytes)
 
@@ -18,7 +17,7 @@ async def open_pdf(file):
     return pdf
 
 
-def pdf_to_sentences(pdf):
+def sentences(pdf):
     text = ""
 
     for page_num in range(len(pdf)):

@@ -3,7 +3,8 @@ from pydantic import BaseModel
 # cors middleware tutorial https://fastapi.tiangolo.com/tutorial/cors/
 from fastapi.middleware.cors import CORSMiddleware
 
-import process
+
+import utils
 import vector as vdb
 from process_prompt import process_prompt
 
@@ -22,10 +23,14 @@ app.add_middleware(
 
 @app.post("/api/upload")
 async def process_file(file: UploadFile = File(...)):
+    print("FILE IS:", file)
     print("resetting collection...")
     await vdb.reset_collection("vector.db", "demo_collection")
+
     print("processing file...")
-    sentences = await process.pdf(file)
+    sentences = await utils.chunk(file)
+    # print(sentences)
+
     print("file processed. embedding and inserting into db...")
     result = await vdb.embed_and_insert(sentences)
     return {"message": f"{result['insert_count']} entries added to database"}

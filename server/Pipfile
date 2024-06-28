@@ -108,8 +108,9 @@ wrapt = "==1.16.0"
 yarg = "==0.1.9"
 en-core-web-sm = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl"}
 pymilvus = {extras = ["model"], version = "*"}
+langchain-text-splitters = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.10"
