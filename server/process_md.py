@@ -2,6 +2,9 @@ import io
 
 # pipenv install -q langchain-text-splitters
 from langchain_text_splitters import MarkdownHeaderTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+
 
 
 # needs to take UploadFile
@@ -30,7 +33,27 @@ def string_to_seperate_documents(file_string):
     ]
 
     markdown_splitter = MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on)
-    return markdown_splitter.split_text(file_string)
+    # return markdown_splitter.split_text(file_string)
+
+
+    # -----------------------------
+
+    # MD splits
+    markdown_splitter = MarkdownHeaderTextSplitter(
+        headers_to_split_on=headers_to_split_on, strip_headers=False
+    )
+    md_header_splits = markdown_splitter.split_text(file_string)
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=250, chunk_overlap=30
+    )
+
+    # Split
+    splits = text_splitter.split_documents(md_header_splits)
+    print('splits are', splits)
+    return splits
+
+    # -----------------------------
 
 # gets content as string from langchain documents -> returns as list
 def extract_document_contents(langchain_documents):
