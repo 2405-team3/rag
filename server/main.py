@@ -33,6 +33,8 @@ async def process_file(file: UploadFile = File(...)):
 
     print("file processed. embedding and inserting into db...")
     result = await vdb.embed_and_insert(sentences)
+    print("db insertion complete.")
+
     return {"message": f"{result['insert_count']} entries added to database"}
 
 class UserQuery(BaseModel):
@@ -41,7 +43,7 @@ class UserQuery(BaseModel):
 @app.post("/api/query")
 async def post_query(query: UserQuery):
     print('user query: ', query)
-    matches = await vdb.process_query(query)
+    matches = await vdb.gather_context(query)
     print('matches: ', matches)
     response = await process_prompt(query, matches)
     return { "type": "response", "body": response }

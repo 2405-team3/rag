@@ -56,17 +56,17 @@ async def insert_data_into_collection(data):
     connections.disconnect("vector.db")
     return result
 
-def text_from_single_query_result(result):
+def text_from_milvus_documents(result):
     text = [result['entity']['text'] for result in result[0]]
     return '\n'.join(text)
 
 # for skateboard, it may be wise to limit the queries down to one sentence
 # though we can likely test how longer sentences do
-async def process_query(query, num_results=3):
+async def gather_context(query, num_results=3):
     client = MilvusClient("vector.db")
     query_vector = embedding_fn.encode_queries(query)
 
-    result = client.search(
+    contextual_documents = client.search(
         collection_name="demo_collection",
         data=query_vector,
         # filter=
@@ -74,7 +74,7 @@ async def process_query(query, num_results=3):
         output_fields=["text"]
     )
 
-    result_text = text_from_single_query_result(result)
-    # print(result_text)
+    text = text_from_milvus_documents(contextual_documents)
+    # print(text)
     connections.disconnect("vector.db")
-    return result_text
+    return text
